@@ -29,7 +29,7 @@ public class MessageProcessorApplication  {
             
                 ConnectionFactory factory = new ConnectionFactory();
                 
-                factory.setHost("192.168.1.74");
+                factory.setHost("192.168.13.62");
                 factory.setUsername("guest");
                 factory.setPassword("guest");
                 factory.setPort(5672);
