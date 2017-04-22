@@ -10,18 +10,26 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
+@Component
 @SpringBootApplication
+@ConfigurationProperties
 public class MessageProcessorApplication  {
 
     private final static String QUEUE_NAME = "codaProcessi";
-
+    private static String rabbitHost;
+    private static int rabbitPort;
+    private static String rabbitUser;
+    private static String rabbitPass;  
+  
+    
    @Bean
     public CommandLineRunner process(IProcessoRepository repo) throws Exception {
         return (args) -> {  
@@ -29,10 +37,10 @@ public class MessageProcessorApplication  {
             
                 ConnectionFactory factory = new ConnectionFactory();
                 
-                factory.setHost("192.168.13.62");
-                factory.setUsername("guest");
-                factory.setPassword("guest");
-                factory.setPort(5672);
+                factory.setHost(rabbitHost);
+                factory.setUsername(rabbitUser);
+                factory.setPassword(rabbitPass);
+                factory.setPort(rabbitPort);
                 
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
@@ -106,5 +114,26 @@ public class MessageProcessorApplication  {
                         SpringApplication.run(MessageProcessorApplication.class, args);
     }
 
+    @Value("${rabbit.host}")
+    public void setRabbitHost(String rabbitHost) {
+        MessageProcessorApplication.rabbitHost = rabbitHost;
+    }
+
+    @Value("${rabbit.port}")
+    public void setRabbitPort(int rabbitPort) {
+        MessageProcessorApplication.rabbitPort = rabbitPort;
+    }
+
+    @Value("${rabbit.user}")
+    public void setRabbitUser(String rabbitUser) {
+        MessageProcessorApplication.rabbitUser = rabbitUser;
+    }
+
+    @Value("${rabbit.pass}")
+    public void setRabbitPass(String rabbitPass) {
+        MessageProcessorApplication.rabbitPass = rabbitPass;
+    }
+
+    
 
 }
